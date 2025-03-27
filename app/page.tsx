@@ -7,30 +7,32 @@ import BudgetHistory from '@/components/budget-history'
 
 export default function Home() {
 	return (
-		<main className="container mx-auto py-4 px-3 md:px-4 lg:px-6 min-h-screen">
+		<main className="container mx-auto py-4 px-4 sm:px-6 lg:px-8 min-h-screen">
 			<div className="mb-6 text-center">
-				<h1 className="text-3xl font-bold tracking-tight mb-1 gradient-text">Finance App</h1>
-				<p className="text-muted-foreground max-w-2xl mx-auto text-sm">
+				<h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1 gradient-text">
+					Finance App
+				</h1>
+				<p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
 					Track your income, expenses, and savings
 				</p>
 			</div>
 
 			<Tabs defaultValue="dashboard" className="w-full">
-				<TabsList className="grid w-full grid-cols-5 mb-4">
-					<TabsTrigger value="dashboard" className="text-xs md:text-sm">
+				<TabsList className="grid w-full grid-cols-5 mb-4 h-auto sm:h-10">
+					<TabsTrigger value="dashboard" className="text-sm sm:text-base py-2 sm:py-1.5">
 						Dashboard
 					</TabsTrigger>
-					<TabsTrigger value="savings" className="text-xs md:text-sm">
+					<TabsTrigger value="savings" className="text-sm sm:text-base py-2 sm:py-1.5">
 						Savings
 					</TabsTrigger>
-					<TabsTrigger value="investments" className="text-xs md:text-sm">
+					<TabsTrigger value="investments" className="text-sm sm:text-base py-2 sm:py-1.5">
 						Investments
 					</TabsTrigger>
-					<TabsTrigger value="yearly" className="text-xs md:text-sm">
-						Yearly Analysis
+					<TabsTrigger value="yearly" className="text-sm sm:text-base py-2 sm:py-1.5">
+						Yearly
 					</TabsTrigger>
-					<TabsTrigger value="history" className="text-xs md:text-sm">
-						Budget History
+					<TabsTrigger value="history" className="text-sm sm:text-base py-2 sm:py-1.5">
+						History
 					</TabsTrigger>
 				</TabsList>
 

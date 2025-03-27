@@ -13,6 +13,21 @@ export const metadata: Metadata = {
 	icons: {
 		icon: '/favicon.ico',
 	},
+	manifest: '/manifest.json',
+	themeColor: '#000000',
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: 'default',
+		title: 'Finance App',
+	},
+	formatDetection: {
+		telephone: false,
+	},
+	viewport: {
+		width: 'device-width',
+		initialScale: 1,
+		maximumScale: 1,
+	},
 	openGraph: {
 		title: 'Personal Finance Tracker',
 		description: 'Track your income, expenses, and savings',
@@ -33,11 +48,39 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<head>
+				<link rel="manifest" href="/manifest.json" />
+				<meta name="theme-color" content="#000000" />
+				<meta name="apple-mobile-web-app-capable" content="yes" />
+				<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+				<meta name="apple-mobile-web-app-title" content="Finance App" />
+				<meta name="format-detection" content="telephone=no" />
+				<meta name="mobile-web-app-capable" content="yes" />
+				<meta name="application-name" content="Finance App" />
+			</head>
 			<body className={inter.className}>
 				<BudgetProvider>
 					{children}
 					<Toaster />
 				</BudgetProvider>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `
+							if ('serviceWorker' in navigator) {
+								window.addEventListener('load', function() {
+									navigator.serviceWorker.register('/sw.js').then(
+										function(registration) {
+											console.log('ServiceWorker registration successful');
+										},
+										function(err) {
+											console.log('ServiceWorker registration failed: ', err);
+										}
+									);
+								});
+							}
+						`,
+					}}
+				/>
 			</body>
 		</html>
 	)
