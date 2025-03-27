@@ -10,7 +10,20 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
 	title: 'Personal Finance Tracker',
 	description: 'Track your income, expenses, and savings',
-	generator: 'v0.dev',
+	icons: {
+		icon: '/favicon.ico',
+	},
+	openGraph: {
+		title: 'Personal Finance Tracker',
+		description: 'Track your income, expenses, and savings',
+		url: 'https://fipa.natiflix.com',
+		siteName: 'Personal Finance Tracker',
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Personal Finance Tracker',
+		description: 'Track your income, expenses, and savings',
+	},
 }
 
 export default function RootLayout({
