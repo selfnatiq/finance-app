@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-	title: 'Personal Finance Tracker',
+	title: 'Fipa - Personal Finance Tracker',
 	description: 'Track your income, expenses, and savings',
 	icons: {
 		icon: '/favicon.ico',
@@ -28,20 +28,20 @@ export const metadata: Metadata = {
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: 'default',
-		title: 'Finance App',
+		title: 'Fipa',
 	},
 	formatDetection: {
 		telephone: false,
 	},
 	openGraph: {
-		title: 'Personal Finance Tracker',
+		title: 'Fipa - Personal Finance Tracker',
 		description: 'Track your income, expenses, and savings',
 		url: 'https://fipa.natiflix.com',
-		siteName: 'Personal Finance Tracker',
+		siteName: 'Fipa',
 	},
 	twitter: {
 		card: 'summary_large_image',
-		title: 'Personal Finance Tracker',
+		title: 'Fipa - Personal Finance Tracker',
 		description: 'Track your income, expenses, and savings',
 	},
 }
@@ -58,10 +58,10 @@ export default function RootLayout({
 				<meta name="theme-color" content="#000000" />
 				<meta name="apple-mobile-web-app-capable" content="yes" />
 				<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-				<meta name="apple-mobile-web-app-title" content="Finance App" />
+				<meta name="apple-mobile-web-app-title" content="Fipa" />
 				<meta name="format-detection" content="telephone=no" />
 				<meta name="mobile-web-app-capable" content="yes" />
-				<meta name="application-name" content="Finance App" />
+				<meta name="application-name" content="Fipa" />
 			</head>
 			<body className={inter.className}>
 				<BudgetProvider>

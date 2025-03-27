@@ -1,6 +1,6 @@
 {
-  "name": "Finance App",
-  "short_name": "Finance",
+  "name": "Fipa",
+  "short_name": "Fipa",
   "description": "Track your income, expenses, and savings",
   "start_url": "/",
   "display": "standalone",
