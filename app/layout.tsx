@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { BudgetProvider } from '@/components/budget-context'
 import { Toaster } from '@/components/ui/toaster'
+import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -66,6 +67,7 @@ export default function RootLayout({
 				<BudgetProvider>
 					{children}
 					<Toaster />
+					<PWAInstallPrompt />
 				</BudgetProvider>
 				<script
 					dangerouslySetInnerHTML={{
