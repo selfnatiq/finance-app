@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { BudgetProvider } from '@/components/budget-context'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,7 +34,10 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body className={inter.className}>
-				<BudgetProvider>{children}</BudgetProvider>
+				<BudgetProvider>
+					{children}
+					<Toaster />
+				</BudgetProvider>
 			</body>
 		</html>
 	)
