@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 		icon: '/favicon.ico',
 	},
 	manifest: '/manifest.json',
-	themeColor: '#000000',
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: 'default',
