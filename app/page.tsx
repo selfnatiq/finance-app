@@ -117,7 +117,7 @@ export default function Home() {
 				<div className="flex flex-col h-full">
 					{/* Logo and close button (mobile only) */}
 					<div className="p-4 border-b border-border flex items-center justify-between">
-						<FipaLogo />
+						<FipaLogo noText={true} />
 						<div className="flex items-center gap-2">
 							<ThemeToggle />
 							{isMobile && (

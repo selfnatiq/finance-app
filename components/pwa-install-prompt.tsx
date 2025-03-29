@@ -11,6 +11,7 @@ import {
 	SheetDescription,
 } from '@/components/ui/sheet'
 import Image from 'next/image'
+import FipaLogo from './fipa-logo'
 
 interface BeforeInstallPromptEvent extends Event {
 	prompt: () => Promise<void>
@@ -52,20 +53,18 @@ export function PWAInstallPrompt() {
 		<Sheet open={isOpen} onOpenChange={setIsOpen}>
 			<SheetContent side="bottom" className="h-[40vh]">
 				<SheetHeader className="flex flex-col items-center space-y-4">
-					<div className="relative h-24 w-24 animate-bounce">
-						<Image src="/logo.png" alt="App Logo" fill className="object-contain" />
-					</div>
-					<SheetTitle className="text-center text-2xl">Install Finance App</SheetTitle>
+					<FipaLogo className="animate-bounce" noText={true} />
+					<SheetTitle className="text-center text-2xl">Get Fipa on Your Device</SheetTitle>
 					<SheetDescription className="text-center text-base">
-						Install our app for a better experience with quick access, offline support, and faster
-						performance.
+						Take your financial planning to the next level. Add Fipa to your home screen for instant
+						access, seamless offline tracking, and a smooth native-like experience.
 					</SheetDescription>
 					<Button
 						onClick={handleInstallClick}
 						className="mt-4 flex items-center gap-2 bg-primary hover:bg-primary/90"
 					>
 						<Download className="h-4 w-4" />
-						Install Now
+						Install
 					</Button>
 				</SheetHeader>
 			</SheetContent>
