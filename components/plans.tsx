@@ -393,8 +393,8 @@ export default function Plans() {
 
 			{/* New Plan Dialog */}
 			<Dialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
+				<DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+					<DialogHeader className="sticky top-0 bg-background z-10 pb-2">
 						<DialogTitle>Create New Financial Plan</DialogTitle>
 						<DialogDescription>
 							Set up a plan to track your progress towards a financial goal
@@ -534,7 +534,7 @@ export default function Plans() {
 						</div>
 					</div>
 
-					<DialogFooter>
+					<DialogFooter className="sticky bottom-0 bg-background z-10 pt-4 border-t">
 						<Button variant="outline" onClick={() => setShowNewPlanDialog(false)}>
 							Cancel
 						</Button>
@@ -546,8 +546,8 @@ export default function Plans() {
 			{/* Plan Details Dialog */}
 			{selectedPlan && (
 				<Dialog open={showPlanDetailsDialog} onOpenChange={setShowPlanDetailsDialog}>
-					<DialogContent className="sm:max-w-lg">
-						<DialogHeader>
+					<DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+						<DialogHeader className="sticky top-0 bg-background z-10 pb-2">
 							<DialogTitle className="flex items-center gap-2">
 								{(() => {
 									const Icon = getPlanTypeIcon(selectedPlan.type)
@@ -869,6 +869,12 @@ export default function Plans() {
 								</TabsContent>
 							</Tabs>
 						</div>
+
+						<DialogFooter className="sticky bottom-0 bg-background z-10 pt-4 border-t">
+							<Button variant="outline" onClick={() => setShowPlanDetailsDialog(false)}>
+								Close
+							</Button>
+						</DialogFooter>
 					</DialogContent>
 				</Dialog>
 			)}
