@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
 	title: 'Fipa - Personal Finance Tracker',
-	description: 'Track your income, expenses, savings, and investments',
+	description: 'Track your income, expenses, savings, and investments by Natilix',
 	icons: {
 		icon: '/favicon.ico',
 	},
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
 	},
 	openGraph: {
 		title: 'Fipa - Personal Finance Tracker',
-		description: 'Track your income, expenses, savings, and investments',
+		description: 'Track your income, expenses, savings, and investments by Natilix',
 		url: 'https://fipa.natiflix.com',
 		siteName: 'Fipa',
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: 'Fipa - Personal Finance Tracker',
-		description: 'Track your income, expenses, savings, and investments',
+		description: 'Track your income, expenses, savings, and investments by Natilix',
 	},
 }
 
