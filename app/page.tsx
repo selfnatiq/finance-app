@@ -76,6 +76,11 @@ export default function Home() {
 	useEffect(() => {
 		const handleViewChange = (e: CustomEvent) => {
 			setActiveView(e.detail.view)
+			// Scroll to top smoothly when view changes
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth',
+			})
 		}
 
 		window.addEventListener('setActiveView', handleViewChange as EventListener)
@@ -83,6 +88,15 @@ export default function Home() {
 			window.removeEventListener('setActiveView', handleViewChange as EventListener)
 		}
 	}, [])
+
+	// Handle navigation click with smooth scroll
+	const handleNavClick = (viewId: string) => {
+		setActiveView(viewId)
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth',
+		})
+	}
 
 	const renderContent = () => {
 		switch (activeView) {
@@ -141,7 +155,7 @@ export default function Home() {
 								return (
 									<li key={item.id}>
 										<button
-											onClick={() => setActiveView(item.id)}
+											onClick={() => handleNavClick(item.id)}
 											className={cn(
 												'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
 												activeView === item.id
@@ -214,21 +228,24 @@ export default function Home() {
 							return (
 								<button
 									key={item.id}
-									onClick={() => setActiveView(item.id)}
+									onClick={() => handleNavClick(item.id)}
 									className={cn(
-										'flex flex-col items-center justify-center gap-1 w-full h-full transition-all duration-200',
-										activeView === item.id && 'text-primary'
+										'ios-nav-button flex flex-col items-center justify-center gap-1 w-full h-full',
+										activeView === item.id ? 'active' : ''
 									)}
 								>
-									<div
+									<div className="ios-nav-icon relative flex items-center justify-center">
+										<div className="ios-nav-ripple" />
+										<Icon className="h-5 w-5 relative z-10" />
+									</div>
+									<span
 										className={cn(
-											'relative flex items-center justify-center',
-											activeView === item.id && 'nav-icon-active'
+											'text-[10px] font-medium transition-all duration-300 ease-in-out',
+											activeView === item.id ? 'opacity-100' : 'opacity-70'
 										)}
 									>
-										<Icon className="h-5 w-5" />
-									</div>
-									<span className="text-[10px] font-medium">{item.label}</span>
+										{item.label}
+									</span>
 								</button>
 							)
 						})}
