@@ -78,24 +78,7 @@ export default function RootLayout({
 						<PWAInstallPrompt />
 					</BudgetProvider>
 				</ThemeProvider>
-				<script
-					dangerouslySetInnerHTML={{
-						__html: `
-							if ('serviceWorker' in navigator) {
-								window.addEventListener('load', function() {
-									navigator.serviceWorker.register('/sw.js').then(
-										function(registration) {
-											console.log('ServiceWorker registration successful');
-										},
-										function(err) {
-											console.log('ServiceWorker registration failed: ', err);
-										}
-									);
-								});
-							}
-						`,
-					}}
-				/>
+				{/* Service worker registration handled by next-pwa */}
 			</body>
 		</html>
 	)
