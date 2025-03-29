@@ -6,6 +6,7 @@ import { BudgetProvider } from '@/components/budget-context'
 import { Toaster } from '@/components/ui/toaster'
 import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AppShell } from '@/components/app-shell'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -72,7 +73,7 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<BudgetProvider>
-						{children}
+						<AppShell>{children}</AppShell>
 						<Toaster />
 						<PWAInstallPrompt />
 					</BudgetProvider>
