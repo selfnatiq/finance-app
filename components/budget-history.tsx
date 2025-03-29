@@ -12,7 +12,7 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { useToast } from '@/hooks/use-toast'
-import { Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Calendar, ArrowUpRight, ArrowDownRight, MinusCircle } from 'lucide-react'
 import { format } from 'date-fns'
 import {
 	AreaChart,
@@ -64,17 +64,19 @@ export default function BudgetHistory() {
 	})
 
 	const deleteHistoryEntry = (id: string) => {
-		const updatedHistory = budgetHistory.filter((entry) => entry.id !== id)
-		setBudgetHistory(updatedHistory)
+		if (window.confirm('Are you sure you want to delete this budget entry?')) {
+			const updatedHistory = budgetHistory.filter((entry) => entry.id !== id)
+			setBudgetHistory(updatedHistory)
 
-		// Update localStorage
-		if (typeof window !== 'undefined') {
-			localStorage.setItem('budgetHistory', JSON.stringify(updatedHistory))
+			// Update localStorage
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('budgetHistory', JSON.stringify(updatedHistory))
 
-			toast({
-				title: 'Entry Deleted',
-				description: 'The budget entry has been removed from history.',
-			})
+				toast({
+					title: 'Entry Deleted',
+					description: 'The budget entry has been removed from history.',
+				})
+			}
 		}
 	}
 
@@ -105,16 +107,28 @@ export default function BudgetHistory() {
 						</div>
 					) : (
 						<div className="space-y-4">
-							<div className="rounded-md border">
+							<div className="rounded-md border bg-card">
 								<Table>
 									<TableHeader>
-										<TableRow>
-											<TableHead className="text-xs">Month</TableHead>
-											<TableHead className="text-xs text-right">Income</TableHead>
-											<TableHead className="text-xs text-right">Expenses</TableHead>
-											<TableHead className="text-xs text-right">Savings</TableHead>
-											<TableHead className="text-xs text-right">Savings Rate</TableHead>
-											<TableHead className="text-xs text-right">Actions</TableHead>
+										<TableRow className="hover:bg-transparent">
+											<TableHead className="text-xs font-medium text-muted-foreground">
+												Month
+											</TableHead>
+											<TableHead className="text-xs font-medium text-muted-foreground text-right">
+												Income
+											</TableHead>
+											<TableHead className="text-xs font-medium text-muted-foreground text-right">
+												Expenses
+											</TableHead>
+											<TableHead className="text-xs font-medium text-muted-foreground text-right">
+												Savings
+											</TableHead>
+											<TableHead className="text-xs font-medium text-muted-foreground text-right">
+												Savings Rate
+											</TableHead>
+											<TableHead className="text-xs font-medium text-muted-foreground text-right">
+												Actions
+											</TableHead>
 										</TableRow>
 									</TableHeader>
 									<TableBody>
@@ -125,19 +139,19 @@ export default function BudgetHistory() {
 												: 0
 
 											return (
-												<TableRow key={entry.id}>
-													<TableCell className="text-xs font-medium">
+												<TableRow key={entry.id} className="hover:bg-muted/50 transition-colors">
+													<TableCell className="text-xs font-medium py-3">
 														{format(entry.date, 'MMM yyyy')}
 													</TableCell>
-													<TableCell className="text-xs text-right">
-														CHF {formatNumber(entry.income)}
+													<TableCell className="text-xs text-right py-3">
+														<span className="font-medium">CHF {formatNumber(entry.income)}</span>
 													</TableCell>
-													<TableCell className="text-xs text-right">
-														CHF {formatNumber(entry.expenses)}
+													<TableCell className="text-xs text-right py-3">
+														<span className="font-medium">CHF {formatNumber(entry.expenses)}</span>
 													</TableCell>
-													<TableCell className="text-xs text-right">
+													<TableCell className="text-xs text-right py-3">
 														<div className="flex items-center justify-end gap-1">
-															CHF {formatNumber(entry.savings)}
+															<span className="font-medium">CHF {formatNumber(entry.savings)}</span>
 															{savingsTrend !== 0 && (
 																<span
 																	className={savingsTrend > 0 ? 'text-green-500' : 'text-red-500'}
@@ -151,17 +165,17 @@ export default function BudgetHistory() {
 															)}
 														</div>
 													</TableCell>
-													<TableCell className="text-xs text-right">
-														{entry.savingsRate.toFixed(1)}%
+													<TableCell className="text-xs text-right py-3">
+														<span className="font-medium">{entry.savingsRate.toFixed(1)}%</span>
 													</TableCell>
-													<TableCell className="text-xs text-right">
+													<TableCell className="text-xs text-right py-3">
 														<Button
 															variant="ghost"
 															size="sm"
 															onClick={() => deleteHistoryEntry(entry.id)}
-															className="h-6 text-xs"
+															className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
 														>
-															Delete
+															<MinusCircle className="h-3 w-3" />
 														</Button>
 													</TableCell>
 												</TableRow>

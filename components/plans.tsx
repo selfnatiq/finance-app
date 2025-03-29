@@ -261,8 +261,8 @@ export default function Plans() {
 					}}
 					className="rounded-xl"
 				>
-					<PlusCircle className="mr-2 h-4 w-4" />
-					Create New Plan
+					<PlusCircle className="h-4 w-4 md:mr-2" />
+					<span className="hidden md:inline">Create New Plan</span>
 				</Button>
 			</div>
 
@@ -534,7 +534,7 @@ export default function Plans() {
 						</div>
 					</div>
 
-					<DialogFooter className="sticky bottom-0 bg-background z-10 pt-4 border-t">
+					<DialogFooter className="sticky bottom-0 bg-background z-10 pt-4 border-t flex flex-col sm:flex-row gap-2 sm:gap-0">
 						<Button variant="outline" onClick={() => setShowNewPlanDialog(false)}>
 							Cancel
 						</Button>

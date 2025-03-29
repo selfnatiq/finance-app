@@ -224,7 +224,12 @@ export default function Dashboard() {
 			savings,
 		}
 
-		const updatedHistory = [...budgetHistory, newEntry]
+		const updatedHistory = budgetHistory.map((entry) =>
+			entry.date.getMonth() === newEntry.date.getMonth() &&
+			entry.date.getFullYear() === newEntry.date.getFullYear()
+				? { ...entry, ...newEntry }
+				: entry
+		)
 		setBudgetHistory(updatedHistory)
 
 		if (typeof window !== 'undefined') {

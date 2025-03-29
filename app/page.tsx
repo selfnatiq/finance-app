@@ -27,8 +27,8 @@ const navItems = [
 	{ id: 'savings', label: 'Savings', icon: PiggyBank },
 	{ id: 'investments', label: 'Invest', icon: TrendingUp },
 	{ id: 'yearly', label: 'Analysis', icon: BarChart3 },
-	{ id: 'history', label: 'History', icon: History },
 	{ id: 'plans', label: 'Plans', icon: Target },
+	{ id: 'history', label: 'History', icon: History },
 ]
 
 export default function Home() {
