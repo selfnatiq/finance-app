@@ -5,11 +5,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { PlusCircle, MinusCircle, Wallet, TrendingUp, PiggyBank, Save, Info } from 'lucide-react'
+import {
+	PlusCircle,
+	MinusCircle,
+	Wallet,
+	TrendingUp,
+	PiggyBank,
+	Save,
+	Info,
+	ArrowUpRight,
+	ArrowDownRight,
+} from 'lucide-react'
 import { ChfIcon } from '@/components/ui/chf-icon'
 import { useToast } from '@/hooks/use-toast'
-import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog'
+import { ChfNumberInput } from '@/components/ui/chf-number-input'
 
 export default function Dashboard() {
 	const { toast } = useToast()
@@ -64,6 +81,16 @@ export default function Dashboard() {
 		return []
 	})
 	const [isLoading, setIsLoading] = useState(true)
+	const [showAnalysisDialog, setShowAnalysisDialog] = useState(false)
+	const [analysisData, setAnalysisData] = useState<{
+		monthlySavings: number
+		annualSavings: number
+		fiveYearSavings: number
+		tenYearSavings: number
+		fiveYearInvestment: number
+		tenYearInvestment: number
+		twentyYearInvestment: number
+	} | null>(null)
 
 	useEffect(() => {
 		// Simulate loading state for better UX
@@ -191,22 +218,13 @@ export default function Dashboard() {
 		const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0)
 
 		const newEntry = {
-			id: Date.now().toString(),
 			date: new Date(),
 			income,
 			expenses: totalExpenses,
 			savings,
 		}
 
-		// Filter out any existing entries from the same month and year
-		const currentMonth = newEntry.date.getMonth()
-		const currentYear = newEntry.date.getFullYear()
-		const filteredHistory = budgetHistory.filter((entry) => {
-			const entryDate = new Date(entry.date)
-			return entryDate.getMonth() !== currentMonth || entryDate.getFullYear() !== currentYear
-		})
-
-		const updatedHistory = [...filteredHistory, newEntry]
+		const updatedHistory = [...budgetHistory, newEntry]
 		setBudgetHistory(updatedHistory)
 
 		if (typeof window !== 'undefined') {
@@ -214,7 +232,7 @@ export default function Dashboard() {
 
 			toast({
 				title: 'Budget Saved',
-				description: 'Your current budget has been saved to history for this month.',
+				description: 'Your current budget has been saved to history.',
 			})
 		}
 	}
@@ -236,19 +254,55 @@ export default function Dashboard() {
 	}
 
 	return (
-		<div className="space-y-4">
-			<div className="grid gap-4 md:grid-cols-2">
-				<Card className="card-hover border-l-4 border-l-navy compact-card">
-					<CardHeader className="py-4 px-5">
+		<div className="space-y-6">
+			{/* Financial Summary Cards */}
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 fade-in">
+				<Card className="fipa-stat">
+					<div className="fipa-stat-label">Income</div>
+					<div className="fipa-stat-value flex items-center gap-1">
+						<span>CHF {formatNumber(income)}</span>
+						<ArrowUpRight className="h-4 w-4 text-positive" />
+					</div>
+				</Card>
+
+				<Card className="fipa-stat">
+					<div className="fipa-stat-label">Expenses</div>
+					<div className="fipa-stat-value flex items-center gap-1">
+						<span>CHF {formatNumber(totalExpenses)}</span>
+						<ArrowDownRight className="h-4 w-4 text-destructive" />
+					</div>
+				</Card>
+
+				<Card className="fipa-stat">
+					<div className="fipa-stat-label">Savings</div>
+					<div className="fipa-stat-value flex items-center gap-1">
+						<span>CHF {formatNumber(savings)}</span>
+						{savings >= 0 ? (
+							<ArrowUpRight className="h-4 w-4 text-positive" />
+						) : (
+							<ArrowDownRight className="h-4 w-4 text-destructive" />
+						)}
+					</div>
+				</Card>
+
+				<Card className="fipa-stat">
+					<div className="fipa-stat-label">Savings Rate</div>
+					<div className="fipa-stat-value">{savingsPercentage.toFixed(1)}%</div>
+				</Card>
+			</div>
+
+			<div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+				<Card className="fipa-card slide-up stagger-1">
+					<CardHeader className="fipa-card-header">
 						<CardTitle className="flex items-center gap-2 text-lg">
-							<Wallet className="h-5 w-5 text-navy" />
+							<Wallet className="h-5 w-5 text-primary" />
 							Income & Expenses
 						</CardTitle>
 						<CardDescription className="text-sm">
 							Enter your monthly income and expenses
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="card-content">
+					<CardContent className="fipa-card-content">
 						{isLoading ? (
 							<div className="space-y-3 animate-pulse">
 								<div className="h-8 bg-muted rounded-md"></div>
@@ -259,7 +313,7 @@ export default function Dashboard() {
 								</div>
 							</div>
 						) : (
-							<div className="space-y-3">
+							<div className="space-y-4">
 								<div className="compact-form-group">
 									<Label htmlFor="income" className="compact-label flex items-center gap-1">
 										Monthly Income
@@ -275,20 +329,17 @@ export default function Dashboard() {
 										</TooltipProvider>
 									</Label>
 									<div className="relative">
-										<ChfIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
-										<Input
+										<ChfIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
+										<ChfNumberInput
 											id="income"
-											type="number"
 											placeholder="Enter your monthly income in CHF"
-											value={income || ''}
-											onChange={(e) => {
-												const newIncome = Number(e.target.value)
+											value={income}
+											onChange={(newIncome) => {
 												setIncome(newIncome)
 												if (typeof window !== 'undefined') {
 													localStorage.setItem('currentIncome', newIncome.toString())
 												}
 											}}
-											className="pl-7 number-input compact-input"
 										/>
 									</div>
 								</div>
@@ -308,14 +359,14 @@ export default function Dashboard() {
 												</Tooltip>
 											</TooltipProvider>
 										</Label>
-										<span className="text-sm font-medium bg-secondary px-1.5 py-0.5 rounded-md">
+										<span className="text-sm font-medium bg-secondary/70 px-2 py-1 rounded-lg">
 											Total: CHF {formatNumber(totalExpenses)}
 										</span>
 									</div>
 
-									<div className="space-y-1.5 max-h-[250px] overflow-y-auto pr-1">
+									<div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
 										{expenses.map((expense) => (
-											<div key={expense.id} className="flex items-center gap-1.5 group">
+											<div key={expense.id} className="flex items-center gap-2 group">
 												<Input
 													placeholder="Expense name"
 													value={expense.name}
@@ -326,10 +377,10 @@ export default function Dashboard() {
 															)
 														)
 													}}
-													className="flex-1 compact-input"
+													className="flex-1 fipa-input"
 												/>
 												<div className="relative">
-													<ChfIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
+													<ChfIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
 													<Input
 														type="number"
 														placeholder="Amount"
@@ -337,45 +388,45 @@ export default function Dashboard() {
 														onChange={(e) =>
 															updateExpenseAmount(expense.id, Number(e.target.value))
 														}
-														className="w-24 pl-7 number-input compact-input"
+														className="w-28 pl-8 number-input fipa-input"
 													/>
 												</div>
 												<Button
 													variant="ghost"
 													size="icon"
 													onClick={() => removeExpense(expense.id)}
-													className="h-7 w-7 opacity-70 hover:opacity-100 hover:bg-destructive/10"
+													className="h-8 w-8 opacity-70 hover:opacity-100 hover:bg-destructive/10 rounded-xl"
 												>
-													<MinusCircle className="h-3.5 w-3.5 text-destructive" />
+													<MinusCircle className="h-4 w-4 text-destructive" />
 												</Button>
 											</div>
 										))}
 									</div>
 
-									<div className="flex items-center gap-1.5 mt-2 bg-secondary/50 p-1.5 rounded-md">
+									<div className="flex items-center gap-2 mt-3 bg-secondary/50 p-3 rounded-xl">
 										<Input
 											placeholder="New expense name"
 											value={newExpenseName}
 											onChange={(e) => setNewExpenseName(e.target.value)}
-											className="flex-1 compact-input"
+											className="flex-1 fipa-input"
 										/>
 										<div className="relative">
-											<ChfIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
+											<ChfIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
 											<Input
 												type="number"
 												placeholder="Amount"
 												value={newExpenseAmount || ''}
 												onChange={(e) => setNewExpenseAmount(Number(e.target.value))}
-												className="w-24 pl-7 number-input compact-input"
+												className="w-28 pl-8 number-input fipa-input"
 											/>
 										</div>
 										<Button
 											variant="outline"
 											size="icon"
 											onClick={addExpense}
-											className="h-7 w-7 hover:bg-primary/10"
+											className="h-8 w-8 rounded-xl hover:bg-primary/10"
 										>
-											<PlusCircle className="h-3.5 w-3.5 text-primary" />
+											<PlusCircle className="h-4 w-4 text-primary" />
 										</Button>
 									</div>
 								</div>
@@ -384,15 +435,15 @@ export default function Dashboard() {
 					</CardContent>
 				</Card>
 
-				<Card className="card-hover border-l-4 border-l-navy compact-card">
-					<CardHeader className="card-header">
+				<Card className="fipa-card slide-up stagger-2">
+					<CardHeader className="fipa-card-header">
 						<CardTitle className="flex items-center gap-2 text-lg">
-							<PiggyBank className="h-5 w-5 text-navy" />
+							<PiggyBank className="h-5 w-5 text-primary" />
 							Monthly Savings
 						</CardTitle>
 						<CardDescription className="text-sm">Your calculated monthly savings</CardDescription>
 					</CardHeader>
-					<CardContent className="card-content">
+					<CardContent className="fipa-card-content">
 						{isLoading ? (
 							<div className="space-y-4 animate-pulse">
 								<div className="h-16 bg-muted rounded-md"></div>
@@ -405,8 +456,8 @@ export default function Dashboard() {
 								</div>
 							</div>
 						) : (
-							<div className="space-y-4">
-								<div className="flex flex-col gap-1.5">
+							<div className="space-y-5">
+								<div className="flex flex-col gap-2">
 									<div className="flex items-center justify-between">
 										<span className="text-sm font-medium">Monthly Savings</span>
 										<span
@@ -417,17 +468,20 @@ export default function Dashboard() {
 											CHF {formatNumber(savings)}
 										</span>
 									</div>
-									<Progress
-										value={Math.max(0, savingsPercentage)}
-										className="h-1.5"
-										indicatorClassName={savings >= 0 ? 'bg-positive' : 'bg-destructive'}
-									/>
+									<div className="fipa-progress">
+										<div
+											className={`fipa-progress-bar ${
+												savings >= 0 ? 'bg-positive' : 'bg-destructive'
+											}`}
+											style={{ width: `${Math.max(0, Math.min(100, savingsPercentage))}%` }}
+										></div>
+									</div>
 									<div className="flex justify-between items-center">
 										<span className="text-sm text-muted-foreground">
 											{savingsPercentage.toFixed(1)}% of income
 										</span>
 										<span
-											className={`text-sm px-1.5 py-0.5 rounded-full ${
+											className={`text-sm px-2 py-0.5 rounded-full ${
 												savings >= 0
 													? 'bg-positive/10 text-positive'
 													: 'bg-destructive/10 text-destructive'
@@ -438,7 +492,7 @@ export default function Dashboard() {
 									</div>
 								</div>
 
-								<div className="space-y-1.5">
+								<div className="space-y-2">
 									<h3 className="text-sm font-medium flex items-center gap-1">
 										Yearly Projection
 										<TooltipProvider>
@@ -453,14 +507,14 @@ export default function Dashboard() {
 										</TooltipProvider>
 									</h3>
 									<div className="grid grid-cols-2 gap-3">
-										<Card className="bg-secondary/30 border-none">
-											<CardContent className="p-2.5">
+										<Card className="bg-secondary/30 border-none rounded-xl">
+											<CardContent className="p-3">
 												<div className="text-sm text-muted-foreground">Annual Savings</div>
 												<div className="text-lg font-bold">CHF {formatNumber(savings * 12)}</div>
 											</CardContent>
 										</Card>
-										<Card className="bg-secondary/30 border-none">
-											<CardContent className="p-2.5">
+										<Card className="bg-secondary/30 border-none rounded-xl">
+											<CardContent className="p-3">
 												<div className="text-sm text-muted-foreground">5-Year Savings</div>
 												<div className="text-lg font-bold">
 													CHF {formatNumber(savings * 12 * 5)}
@@ -470,22 +524,45 @@ export default function Dashboard() {
 									</div>
 								</div>
 
-								<div className="pt-1 space-y-1.5">
+								<div className="pt-1 space-y-2">
 									<Button
 										variant="outline"
-										className="w-full group transition-all h-9 text-sm"
+										className="w-full group transition-all h-10 text-sm rounded-xl"
 										onClick={() => {
-											const yearlyTab = document.querySelector('[value="yearly"]') as HTMLElement
-											if (yearlyTab) {
-												yearlyTab.click()
+											// Calculate detailed analysis data
+											const monthlySavings = savings
+											const annualSavings = savings * 12
+											const fiveYearSavings = savings * 12 * 5
+											const tenYearSavings = savings * 12 * 10
+
+											// Calculate compound growth with 7% annual return
+											const calculateCompoundGrowth = (monthlySavings: number, years: number) => {
+												const monthlyRate = 0.07 / 12
+												const months = years * 12
+												let total = 0
+
+												for (let i = 0; i < months; i++) {
+													total = (total + monthlySavings) * (1 + monthlyRate)
+												}
+
+												return total
 											}
 
-											toast({
-												title: 'Detailed Analysis',
-												description: `Viewing detailed analysis for CHF ${formatNumber(
-													savings
-												)} monthly savings`,
+											const fiveYearInvestment = calculateCompoundGrowth(monthlySavings, 5)
+											const tenYearInvestment = calculateCompoundGrowth(monthlySavings, 10)
+											const twentyYearInvestment = calculateCompoundGrowth(monthlySavings, 20)
+
+											// Set the analysis data and open the dialog
+											setAnalysisData({
+												monthlySavings,
+												annualSavings,
+												fiveYearSavings,
+												tenYearSavings,
+												fiveYearInvestment,
+												tenYearInvestment,
+												twentyYearInvestment,
 											})
+											setShowAnalysisDialog(true)
 										}}
 									>
 										<TrendingUp className="mr-2 h-5 w-5 group-hover:text-primary" />
@@ -494,7 +571,7 @@ export default function Dashboard() {
 
 									<Button
 										variant="default"
-										className="w-full transition-all h-9 text-sm"
+										className="w-full transition-all h-10 text-sm rounded-xl"
 										onClick={saveBudget}
 									>
 										<Save className="mr-2 h-5 w-5" />
@@ -508,19 +585,19 @@ export default function Dashboard() {
 			</div>
 
 			{!isLoading && (
-				<Card className="border-t-4 border-t-navy animate-in compact-card">
-					<CardHeader className="card-header">
+				<Card className="fipa-card slide-up stagger-3">
+					<CardHeader className="fipa-card-header">
 						<CardTitle className="flex items-center gap-2 text-lg">
-							<TrendingUp className="h-5 w-5 text-navy" />
-							Quick Financial Summary
+							<TrendingUp className="h-5 w-5 text-primary" />
+							Financial Summary
 						</CardTitle>
 						<CardDescription className="text-sm">
 							Overview of your current financial situation
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="card-content">
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-							<div className="bg-secondary/30 rounded-lg p-3">
+					<CardContent className="fipa-card-content">
+						<div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4">
+							<div className="bg-secondary/30 rounded-xl p-4">
 								<div className="text-sm text-muted-foreground mb-1">Income to Expense Ratio</div>
 								<div className="text-xl font-bold">
 									{totalExpenses > 0 ? formatNumber(income / totalExpenses) : '∞'}
@@ -534,7 +611,7 @@ export default function Dashboard() {
 								</div>
 							</div>
 
-							<div className="bg-secondary/30 rounded-lg p-3">
+							<div className="bg-secondary/30 rounded-xl p-4">
 								<div className="text-sm text-muted-foreground mb-1">Savings Rate</div>
 								<div className="text-xl font-bold">{savingsPercentage.toFixed(1)}%</div>
 								<div className="text-sm text-muted-foreground mt-1">
@@ -548,7 +625,7 @@ export default function Dashboard() {
 								</div>
 							</div>
 
-							<div className="bg-secondary/30 rounded-lg p-3">
+							<div className="bg-secondary/30 rounded-xl p-4">
 								<div className="text-sm text-muted-foreground mb-1">Monthly Discretionary</div>
 								<div className="text-xl font-bold">CHF {formatNumber(savings)}</div>
 								<div className="text-sm text-muted-foreground mt-1">
@@ -559,6 +636,72 @@ export default function Dashboard() {
 					</CardContent>
 				</Card>
 			)}
+			{/* Detailed Analysis Dialog */}
+			<Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle className="flex items-center gap-2">
+							<TrendingUp className="h-5 w-5 text-primary" />
+							Detailed Financial Analysis
+						</DialogTitle>
+						<DialogDescription>
+							Comprehensive breakdown of your savings and investment projections
+						</DialogDescription>
+					</DialogHeader>
+
+					{analysisData && (
+						<div className="space-y-4 py-2">
+							<div className="space-y-2">
+								<h3 className="text-sm font-medium">Savings Projections</h3>
+								<div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-secondary/30 p-3 rounded-xl">
+									<div className="font-medium">Monthly Savings:</div>
+									<div>CHF {formatNumber(analysisData.monthlySavings)}</div>
+
+									<div className="font-medium">Annual Savings:</div>
+									<div>CHF {formatNumber(analysisData.annualSavings)}</div>
+
+									<div className="font-medium">5-Year Savings:</div>
+									<div>CHF {formatNumber(analysisData.fiveYearSavings)}</div>
+
+									<div className="font-medium">10-Year Savings:</div>
+									<div>CHF {formatNumber(analysisData.tenYearSavings)}</div>
+								</div>
+							</div>
+
+							<div className="space-y-2">
+								<h3 className="text-sm font-medium">Investment Growth (7% Annual Return)</h3>
+								<div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm bg-primary/10 p-3 rounded-xl">
+									<div className="font-medium">5-Year Investment:</div>
+									<div>CHF {formatNumber(analysisData.fiveYearInvestment)}</div>
+
+									<div className="font-medium">10-Year Investment:</div>
+									<div>CHF {formatNumber(analysisData.tenYearInvestment)}</div>
+
+									<div className="font-medium">20-Year Investment:</div>
+									<div>CHF {formatNumber(analysisData.twentyYearInvestment)}</div>
+								</div>
+								<div className="text-xs text-muted-foreground pt-1">
+									Investment projections assume a 7% annual return with monthly contributions of CHF{' '}
+									{formatNumber(analysisData.monthlySavings)}.
+								</div>
+							</div>
+
+							<Button
+								variant="default"
+								size="sm"
+								className="w-full mt-2"
+								onClick={() => {
+									setShowAnalysisDialog(false)
+									const event = new CustomEvent('setActiveView', { detail: { view: 'yearly' } })
+									window.dispatchEvent(event)
+								}}
+							>
+								Go to Full Analysis
+							</Button>
+						</div>
+					)}
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }

@@ -5,6 +5,7 @@ import './globals.css'
 import { BudgetProvider } from '@/components/budget-context'
 import { Toaster } from '@/components/ui/toaster'
 import { PWAInstallPrompt } from '@/components/pwa-install-prompt'
+import { ThemeProvider } from '@/components/theme-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,7 +21,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
 	title: 'Fipa - Personal Finance Tracker',
-	description: 'Track your income, expenses, and savings',
+	description: 'Track your income, expenses, savings, and investments',
 	icons: {
 		icon: '/favicon.ico',
 	},
@@ -35,14 +36,14 @@ export const metadata: Metadata = {
 	},
 	openGraph: {
 		title: 'Fipa - Personal Finance Tracker',
-		description: 'Track your income, expenses, and savings',
+		description: 'Track your income, expenses, savings, and investments',
 		url: 'https://fipa.natiflix.com',
 		siteName: 'Fipa',
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: 'Fipa - Personal Finance Tracker',
-		description: 'Track your income, expenses, and savings',
+		description: 'Track your income, expenses, savings, and investments',
 	},
 }
 
@@ -64,11 +65,18 @@ export default function RootLayout({
 				<meta name="application-name" content="Fipa" />
 			</head>
 			<body className={inter.className}>
-				<BudgetProvider>
-					{children}
-					<Toaster />
-					<PWAInstallPrompt />
-				</BudgetProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<BudgetProvider>
+						{children}
+						<Toaster />
+						<PWAInstallPrompt />
+					</BudgetProvider>
+				</ThemeProvider>
 				<script
 					dangerouslySetInnerHTML={{
 						__html: `
@@ -91,5 +99,3 @@ export default function RootLayout({
 		</html>
 	)
 }
-
-import './globals.css'
